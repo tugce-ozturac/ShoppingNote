@@ -31,6 +31,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -48,6 +49,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,101 +60,125 @@ import java.io.ByteArrayOutputStream
 
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddItemScreen(saveFunction : (item: Item) -> Unit) {
+fun AddItemScreen(saveFunction: (item: Item) -> Unit) {
 
-    val itemName = remember {
-        mutableStateOf("")
-    }
-
-    val storeName = remember {
-        mutableStateOf("")
-    }
-
-    val price = remember {
-        mutableStateOf("")
-    }
-
-    var selectedImageUri by remember {
-        mutableStateOf<Uri?>(null)
-    }
-
+    val itemName = remember { mutableStateOf("") }
+    val storeName = remember { mutableStateOf("") }
+    val price = remember { mutableStateOf("") }
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     val context = LocalContext.current
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(color = MaterialTheme.colorScheme.primaryContainer),
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         contentAlignment = Alignment.Center
     ) {
-
-        Column(horizontalAlignment = Alignment.CenterHorizontally) {
-
-            ImagePicker(onImageSelected = { uri->
-                selectedImageUri = uri
-            })
-
-            TextField(value=itemName.value,
-                placeholder = {
-                    Text("Enter Item Name")
-                }, onValueChange = {
-                    itemName.value = it
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            shape = RoundedCornerShape(24.dp),
+            elevation = CardDefaults.cardElevation(8.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.padding(24.dp)
+            ) {
+                Text(
+                    text = "Add Item",
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    modifier = Modifier.padding(bottom = 16.dp)
                 )
-            )
 
+                ImagePicker(onImageSelected = { uri ->
+                    selectedImageUri = uri
+                })
 
-            TextField(value=storeName.value,
-                placeholder = {
-                    Text("Enter Store Name")
-                }, onValueChange = {
-                    storeName.value = it
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                OutlinedTextField(
+                    value = itemName.value,
+                    onValueChange = { itemName.value = it },
+                    label = { Text("Item Name") },
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
-            )
 
-
-            TextField(value=price.value,
-                placeholder = {
-                    Text("Enter Price")
-                }, onValueChange = {
-                    price.value = it
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
+                OutlinedTextField(
+                    value = storeName.value,
+                    onValueChange = { storeName.value = it },
+                    label = { Text("Store Name") },
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
-            )
 
-            Button(onClick = {
-
-                val imageByteArray = selectedImageUri?.let {
-                    resizeImage(context = context, uri= it, maxWidth = 600, maxHeight = 400)
-                } ?: ByteArray(0)
-
-                val itemToInsert = Item(itemName = itemName.value,
-                    storeName = storeName.value,
-                    price = price.value,
-                    image = imageByteArray
+                OutlinedTextField(
+                    value = price.value,
+                    onValueChange = { price.value = it },
+                    label = { Text("Price") },
+                    textStyle = TextStyle(color = MaterialTheme.colorScheme.onSurface),
+                    singleLine = true,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colorScheme.primary,
+                        unfocusedBorderColor = MaterialTheme.colorScheme.outline,
+                        focusedLabelColor = MaterialTheme.colorScheme.primary,
+                        unfocusedLabelColor = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 )
-                saveFunction(itemToInsert)
-            }) {
-                Text("Save")
+
+                Button(
+                    onClick = {
+                        val imageByteArray = selectedImageUri?.let {
+                            resizeImage(context = context, uri = it, maxWidth = 600, maxHeight = 400)
+                        } ?: ByteArray(0)
+
+                        val itemToInsert = Item(
+                            itemName = itemName.value,
+                            storeName = storeName.value,
+                            price = price.value,
+                            image = imageByteArray
+                        )
+                        saveFunction(itemToInsert)
+                    },
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Text(
+                        "Save",
+                        style = MaterialTheme.typography.labelLarge.copy(fontSize = 18.sp)
+                    )
+                }
             }
         }
-
-
     }
 }
 
